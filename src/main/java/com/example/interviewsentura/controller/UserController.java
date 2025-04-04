@@ -1,37 +1,42 @@
 package com.example.interviewsentura.controller;
 
-import org.springframework.http.HttpStatus;
+
+import com.example.interviewsentura.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
-    private final WeavyClient weavyClient;
 
-    public UserController(WeavyClient weavyClient) {
-        this.weavyClient = weavyClient;
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody String userJson) {
-        try {
-            String response = weavyClient.createUser(userJson);
-            return ResponseEntity.ok(response);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<String> createUser(@RequestBody String user) throws IOException {
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
     @GetMapping
-    public ResponseEntity<String> listUsers() {
-        try {
-            String response = weavyClient.listUsers();
-            return ResponseEntity.ok(response);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<String> listUsers() throws IOException {
+        return ResponseEntity.ok(userService.listUsers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<String> getUser(@PathVariable String id) throws IOException {
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable String id, @RequestBody String user) throws IOException {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id) throws IOException {
+        return ResponseEntity.ok(userService.deleteUser(id));
     }
 }
